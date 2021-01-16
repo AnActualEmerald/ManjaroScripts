@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+mozillavpn deactivate
+export VPN_CONNECT=0

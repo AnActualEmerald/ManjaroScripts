@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mozillavpn activate
+export VPN_CONNECT=1

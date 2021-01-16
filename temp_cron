@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo -$(date +%D):$(date +%T) >> ~/bin/temps.log
+sensors | grep Core >> ~/bin/temps.log
+
+echo Logged time and current cpu temp

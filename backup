@@ -1,0 +1,24 @@
+#!/usr/bin/fish
+
+set_color red
+echo "~~~~~~~~~~~~~~~"
+echo "Starting Backup"
+echo "~~~~~~~~~~~~~~~"
+echo "" #Helps the spacing look nice
+set_color cyan
+
+#write to the log file that the backup was attempted
+echo "Backup started at " (date +%D) " " (date +%T) >> /home/emerald/bin/backup.log 
+
+#pretty cool of fish to let this work
+if rsync -aP --delete --exclude-from="$HOME/bin/backup-ignore" /home/emerald/ /home/emerald/cherrypi/raziel/
+	echo  "Backup completed at" (date +%D) " " (date +%T) >> /home/emerald/bin/backup.log
+else
+	echo "Backup exited with errors at " (date +%D) " " (date +%T) >> /home/emerald/bin/backup.log
+end
+
+set_color green
+echo "~~~~~~~~~~~~~~~"
+echo "Backup Finished"
+echo "~~~~~~~~~~~~~~~"
+

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+firefox-nightly -ssb docs.google.com &
