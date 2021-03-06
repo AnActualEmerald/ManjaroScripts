@@ -1,0 +1,23 @@
+#!/usr/bin/python3
+
+from moviepy.editor import *
+import sys, os
+
+if len(sys.argv) < 3:
+	print("usage: addmusic <picture> <sound>")
+	sys.exit(1)
+
+image = sys.argv[1]
+sound = sys.argv[2]
+
+snd_clip = AudioFileClip(sound)
+img_clip = ImageClip(image).set_audio(snd_clip).set_duration(snd_clip.duration).set_fps(1)
+target = os.getcwd()
+
+
+img_clip.write_videofile(f"{target}/video.mp4", audio_bitrate = '160k')
+# print(f"Output video to {target}/video.qw")
+
+img_clip.close()
+snd_clip.close()
+

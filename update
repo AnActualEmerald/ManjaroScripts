@@ -25,7 +25,7 @@ function clean
   set_color bryellow
   echo "Cleaning unneeded packages..."
   set_color normal
-  paru -R (paru -Qdtq)
+  paru --clean  
 end
 
 update
