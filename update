@@ -3,46 +3,73 @@
 
 #ez update script
 
-#gotta get them args
-set args (getopt -s sh -l "clean" -o "c" abc: $argv)
-set args (fish -c "for el in $args; echo \$el; end")
+set -g skip_clean
 
-function update
+function _update
   set_color brgreen
   echo "Syncing repositories..."
   set_color normal
   paru -Sy
-  set_color brgreen
-  echo "Upgrading packages..."
-  set_color normal
-  paru -Su
-  set_color brgreen 
-  echo "Updating flatpaks..."
-  flatpak update
+  if not set -q -g dry_run 
+  	set_color brgreen
+  	echo "Upgrading packages..."
+  	set_color normal
+  	paru -Su
+  end
+  if not set -q -g skip_flatpak
+  	set_color brgreen 
+  	echo "Updating flatpaks..."
+  	set_color normal
+  	flatpak update
+  end
+  if not set -q -g skip_rust
+  	set_color brgreen 
+  	echo "Updating Rust toolchains..."
+  	set_color normal
+  	rustup update
+  end
 end
 
-function clean
+function _clean
   set_color bryellow
   echo "Cleaning unneeded packages..."
   set_color normal
   paru --clean  
 end
 
-update
+function _help
+	echo "This is the unfinished help section"
+end
 
-set i 1
-while true
-	switch $args[$i]
-		case "--clean"
-			clean
-			
-		case "-c"
-			clean
-
-		case "abc:"
-			break
+function _main
+	
+#check command line args for flags
+getopts $argv | while read -l key value
+	
+	switch $key
+		case c
+			set -e -g skip_clean
+		case clean
+			set -e -g skip_clean
+		case r
+			set -g skip_rust
+		case f
+			set -g skip_flatpak
+		case d 
+			set -g dry_run
+		case h
+			_help
+			return
+		case help	
+			_help
+			return
 	end
-	set i (math "$i + 1")
+
+end
+_update
+
+if not set -q -g skip_clean
+	_clean
 end
 
 echo (set_color green)
@@ -50,4 +77,5 @@ echo "---------------"
 echo "Update Complete"
 echo "---------------"
 echo (set_color normal)
-exit
+end
+_main $argv
