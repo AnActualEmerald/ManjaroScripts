@@ -1,8 +1,10 @@
 #!/bin/bash
 
-#Emerald 1/17/21
+#Emerald 3/18/21
 #Commits *all* changes and pushes to the current branch
 
+#ensure we're in the right directory
+cd /home/emerald/bin
 
 #pull from the current branch to ensure everything is up to date
 git pull
