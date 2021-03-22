@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd ~/build/chia-blockchain
+
+source ./activate
+
+cd chia-blockchain-gui
+
+npm run electron 

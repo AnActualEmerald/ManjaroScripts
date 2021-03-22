@@ -1,21 +1,38 @@
 #!/usr/bin/python3
 
 from moviepy.editor import *
-import sys, os
+import sys, os, argparse
 
-if len(sys.argv) < 3:
-	print("usage: addmusic <picture> <sound>")
-	sys.exit(1)
+parser = argparse.ArgumentParser(description =  "Add music to an image for comedic effect")
+parser.add_argument('picture', metavar='<picture>', nargs=1, type=str, help='the image to add the music to')
+parser.add_argument('sound', metavar='<sound>', nargs=1, type=str, help='the sound to add to the picture')
+parser.add_argument('-l', '--len', metavar='length', nargs=1, type=int, help='the length of to trim the sound to in seconds (defaults to a max of 30s)', dest='length')
+parser.add_argument('--webm', action=argparse.BooleanOptionalAction, help='Make the output vide a .webm')
 
-image = sys.argv[1]
-sound = sys.argv[2]
+args = parser.parse_args()
+image = args.picture[0]
+sound = args.sound[0]
 
 snd_clip = AudioFileClip(sound)
+
+# limit the length to 30 seconds or whatever was provided
+if args.length and snd_clip.duration > args.length[0]:
+    snd_clip = snd_clip.set_duration(args.length)
+elif snd_clip.duration > 30:
+    #also the fact that the setters on these don't modify in place pisses me off
+    snd_clip = snd_clip.set_duration(30)
+
+
 img_clip = ImageClip(image).set_audio(snd_clip).set_duration(snd_clip.duration).set_fps(1)
+img_clip = img_clip.resize(width=400)
 target = os.getcwd()
 
+filetype = '.mp4'
 
-img_clip.write_videofile(f"{target}/video.mp4", audio_bitrate = '160k')
+if args.webm:
+    filetype = '.webm'
+
+img_clip.write_videofile(f"{target}/video{filetype}", audio_bitrate = '160k')
 # print(f"Output video to {target}/video.qw")
 
 img_clip.close()
