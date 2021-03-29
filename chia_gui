@@ -6,4 +6,4 @@ source ./activate
 
 cd chia-blockchain-gui
 
-npm run electron 
+npm run electron &
