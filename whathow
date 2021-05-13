@@ -1,0 +1,52 @@
+#!/usr/bin/python3
+
+from moviepy.editor import *
+import sys, os, argparse
+
+resolution = (640, 480)
+
+# Set up argparse
+
+parser = argparse.ArgumentParser(description =  "Add music to an image for comedic effect")
+parser.add_argument('picture', metavar='<picture>', nargs=1, type=str, help='the image to add the music to')
+parser.add_argument('--webm', action=argparse.BooleanOptionalAction, help='Make the output vide a .webm')
+
+# Get args from argparse
+args = parser.parse_args()
+
+# Load sound (should start at 20 seconds)
+snd_clip = AudioFileClip("/home/emerald/Music/whathowsound.mp4").subclip(20, 30.15)
+
+# Generate text
+what_txt = TextClip(txt="WHAT", font="Bitstream-Vera-Serif-Bold", color="white", kerning=2, align='north', fontsize=50).set_duration(snd_clip.duration)
+how_txt = TextClip(txt="HOW", font="Bitstream-Vera-Serif", color="white", kerning=2, align='north', fontsize=24).set_duration(snd_clip.duration)
+
+# Load image
+image = args.picture[0]
+img_clip = ImageClip(image).set_pos("center").set_fps(24)
+
+# Determine how much to scale the image based on the original size
+scale_x = resolution[0] / img_clip.w
+scale_y = resolution[1] / img_clip.h
+
+scale = scale_x if scale_x < scale_y else scale_y
+print(f"Original res is {img_clip.size}, scaling by {scale}")
+
+
+big_clip = img_clip.resize(scale)
+small_clip= big_clip.resize(0.5 if scale <= 1.0 else scale - 1.0).set_pos(("center", 0.5 - (scale_y if scale_y <= 0.5 else 0.3)), relative=True).margin(mar=10).margin(mar=3, color=(255, 255, 255))
+# Composite output video
+
+target = os.getcwd()
+
+filetype = '.mp4'
+
+if args.webm:
+    filetype = '.webm'
+
+output = CompositeVideoClip([big_clip.set_end(1), small_clip.set_start(1), what_txt.set_pos(("center", 0.73), relative=True).set_start(1), how_txt.set_pos(("center", 0.85), relative=True).set_start(1)], size=resolution).set_audio(snd_clip).set_duration(snd_clip.duration)
+output.write_videofile(f"{target}/video{filetype}", audio_bitrate = '160k')
+
+
+img_clip.close()
+snd_clip.close()
