@@ -34,7 +34,7 @@ print(f"Original res is {img_clip.size}, scaling by {scale}")
 
 
 big_clip = img_clip.resize(scale)
-small_clip= big_clip.resize(0.5 if scale <= 1.0 else scale - 1.0).set_pos(("center", 0.5 - (scale_y if scale_y <= 0.5 else 0.3)), relative=True).margin(mar=10).margin(mar=3, color=(255, 255, 255))
+small_clip= big_clip.resize(0.5 if scale <= 1.0 else scale - scale.__floor__()).set_pos(("center", 0.5 - (scale_y if scale_y <= 0.5 else 0.3)), relative=True).margin(mar=10).margin(mar=3, color=(255, 255, 255))
 # Composite output video
 
 target = os.getcwd()
