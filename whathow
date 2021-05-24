@@ -10,7 +10,7 @@ resolution = (640, 480)
 parser = argparse.ArgumentParser(description =  "Add music to an image for comedic effect")
 parser.add_argument('picture', metavar='<picture>', nargs=1, type=str, help='the image to add the music to')
 parser.add_argument('--webm', action=argparse.BooleanOptionalAction, help='Make the output vide a .webm')
-parser.add_argument('-o', '--output', metavar='output', nargs=1, type=str, help='The name of the output file (defaults to "video)"', dest='output')
+parser.add_argument('-o', '--output', metavar='name', nargs=1, type=str, help='The name of the output file (defaults to "video)"', dest='output')
 
 # Get args from argparse
 args = parser.parse_args()
@@ -45,13 +45,12 @@ small_clip = tmp.set_pos(("center", ((resolution[1] - tmp.h) / 2) - 75))\
 
 target = os.getcwd()
 
-filetype = '.mp4'
-
-if args.webm:
-    filetype = '.webm'
 
 output = CompositeVideoClip([big_clip.set_end(1), small_clip.set_start(1), what_txt.set_pos(("center", 0.73), relative=True).set_start(1), how_txt.set_pos(("center", 0.85), relative=True).set_start(1)], size=resolution).set_audio(snd_clip).set_duration(snd_clip.duration)
-output.write_videofile(f"{target}/{'video' if not args.output else args.output[0]}{filetype}", audio_bitrate = '160k')
+if not args.webm:
+    output.write_videofile(f"{target}/{'video' if not args.output else args.output[0]}.mp4", temp_audiofile='temp-audio.m4a', remove_temp=True, codec="libx264", audio_codec="aac")
+else:
+    output.write_videofile(f"{target}/{'video' if not args.output else args.output[0]}.webm")
 
 
 img_clip.close()

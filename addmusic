@@ -8,6 +8,8 @@ parser.add_argument('picture', metavar='<picture>', nargs=1, type=str, help='the
 parser.add_argument('sound', metavar='<sound>', nargs=1, type=str, help='the sound to add to the picture')
 parser.add_argument('-l', '--len', metavar='length', nargs=1, type=int, help='the length of to trim the sound to in seconds (defaults to a max of 30s)', dest='length')
 parser.add_argument('--webm', action=argparse.BooleanOptionalAction, help='Make the output vide a .webm')
+parser.add_argument('-o', '--output', metavar='name', nargs=1, type=str, help='The name of the output file (defaults to "video)"', dest='output')
+
 
 args = parser.parse_args()
 image = args.picture[0]
@@ -27,12 +29,10 @@ img_clip = ImageClip(image).set_audio(snd_clip).set_duration(snd_clip.duration).
 img_clip = img_clip.resize(width=400)
 target = os.getcwd()
 
-filetype = '.mp4'
-
-if args.webm:
-    filetype = '.webm'
-
-img_clip.write_videofile(f"{target}/video{filetype}", audio_bitrate = '160k')
+if not args.webm:
+    img_clip.write_videofile(f"{target}/{'video' if not args.output else args.output[0]}.mp4", temp_audiofile='temp-audio.m4a', remove_temp=True, codec="libx264", audio_codec="aac")
+else:
+    img_clip.write_videofile(f"{target}/{'video' if not args.output else args.output[0]}.webm")
 # print(f"Output video to {target}/video.qw")
 
 img_clip.close()
