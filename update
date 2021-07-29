@@ -9,21 +9,21 @@ function _update
   set_color brgreen
   echo "Syncing repositories..."
   set_color normal
-  paru -Sy
-  if not set -q -g dry_run 
+  doas paru -Sy
+  if not set -q -g dry_run
   	set_color brgreen
   	echo "Upgrading packages..."
   	set_color normal
-  	paru -Su
+  	doas paru -Su
   end
   if not set -q -g skip_flatpak
-  	set_color brgreen 
+  	set_color brgreen
   	echo "Updating flatpaks..."
   	set_color normal
   	flatpak update
   end
   if not set -q -g skip_rust
-  	set_color brgreen 
+  	set_color brgreen
   	echo "Updating Rust toolchains..."
   	set_color normal
   	rustup update
@@ -34,7 +34,7 @@ function _clean
   set_color bryellow
   echo "Cleaning unneeded packages..."
   set_color normal
-  paru --clean  
+  doas paru --clean
 end
 
 function _help
@@ -42,10 +42,10 @@ function _help
 end
 
 function _main
-	
+
 #check command line args for flags
 getopts $argv | while read -l key value
-	
+
 	switch $key
 		case c
 			set -e -g skip_clean
@@ -55,7 +55,7 @@ getopts $argv | while read -l key value
 			set -g skip_rust
 		case f
 			set -g skip_flatpak
-		case d 
+		case d
 			set -g dry_run
 		case h
 			_help
