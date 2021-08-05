@@ -9,12 +9,12 @@ function _update
   set_color brgreen
   echo "Syncing repositories..."
   set_color normal
-  doas paru -Sy
+  paru -Sy
   if not set -q -g dry_run
   	set_color brgreen
   	echo "Upgrading packages..."
   	set_color normal
-  	doas paru -Su
+  	paru -Su
   end
   if not set -q -g skip_flatpak
   	set_color brgreen
@@ -34,7 +34,7 @@ function _clean
   set_color bryellow
   echo "Cleaning unneeded packages..."
   set_color normal
-  doas paru --clean
+  paru --clean
 end
 
 function _help
